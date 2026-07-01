@@ -8,9 +8,6 @@ to each child via a research-based screening profile.
 > **Screening, not diagnosis.** Dyscovery never diagnoses. It screens for
 > strengths/needs and provides training, as a complement to professional care.
 
-See [`docs/PLAN.md`](docs/PLAN.md) for the full product plan, the research base,
-the architecture decisions, and the roadmap.
-
 ## Three experiences
 
 - **Discover** — a short, adaptive, multi-modal screening → a normalized
@@ -67,6 +64,4 @@ never sell it, and never use it for behavioral ads. See `src/db/schema.ts`
 
 ## Status
 
-**Phase 0 (foundations) in place:** app scaffold, accessibility design system,
-database schema, route shells, and legal/consent scaffolding. Next up: the
-screening engine (Phase 1) and the game engine (Phase 2).
+**Built:** screening engine, AI game engine, profiles, persistence, and Grow dashboard.
