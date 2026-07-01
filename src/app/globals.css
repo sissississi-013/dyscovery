@@ -1,26 +1,166 @@
 @import "tailwindcss";
 
+/*
+  Dyscovery accessibility-first design system.
+
+  Theming is driven by data attributes on <html>, set by the
+  AccessibilityProvider and persisted to localStorage:
+    data-theme   = calm | highContrast | dark        (color scheme)
+    data-font    = lexend | hyperlegible | dyslexic   (typeface)
+    data-text    = sm | md | lg | xl                  (base text scale)
+    data-motion  = full | reduced                     (animation policy)
+
+  Color pairs follow dyslexia web-accessibility guidance: an off-white /
+  off-black default (not pure white-on-black), plus high-contrast and dark
+  options. All foreground/background pairs target WCAG AA (>= 4.5:1).
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Calm (default): off-white surface, off-black ink — recommended for dyslexia */
+  --bg: #faf6ef;
+  --surface: #ffffff;
+  --surface-2: #f3ece0;
+  --fg: #20242b;
+  --muted: #5b6472;
+  --border: #e3d9c8;
+  --accent: #2f6f6b;        /* calm teal */
+  --accent-fg: #ffffff;
+  --accent-soft: #d7ebe8;
+  --secondary: #7a5cc4;     /* playful violet */
+  --success: #2e7d4f;
+  --warning: #b25e00;
+  --danger: #b3261e;
+  --ring: #2f6f6b;
+
+  --radius: 0.9rem;
+  --text-scale: 1; /* multiplied into the base font size */
 }
 
+/* ---- Color themes ------------------------------------------------------- */
+[data-theme="highContrast"] {
+  --bg: #000000;
+  --surface: #000000;
+  --surface-2: #111111;
+  --fg: #ffffff;
+  --muted: #f2e205;          /* yellow-on-black is a recommended dyslexia pair */
+  --border: #ffffff;
+  --accent: #ffe600;
+  --accent-fg: #000000;
+  --accent-soft: #1a1a00;
+  --secondary: #00e5ff;
+  --success: #00e676;
+  --warning: #ffb300;
+  --danger: #ff5252;
+  --ring: #ffe600;
+}
+
+[data-theme="dark"] {
+  --bg: #0f1419;
+  --surface: #161c24;
+  --surface-2: #1f2730;
+  --fg: #e7ecf3;
+  --muted: #9aa6b5;
+  --border: #2b3540;
+  --accent: #4fc3bd;
+  --accent-fg: #07211f;
+  --accent-soft: #143b39;
+  --secondary: #a98be8;
+  --success: #5bd58b;
+  --warning: #e0a44a;
+  --danger: #ff6b6b;
+  --ring: #4fc3bd;
+}
+
+/* ---- Typography --------------------------------------------------------- */
+:root {
+  --font-body: var(--font-lexend), system-ui, sans-serif;
+}
+[data-font="hyperlegible"] {
+  --font-body: var(--font-hyperlegible), system-ui, sans-serif;
+}
+[data-font="dyslexic"] {
+  /* OpenDyslexic is self-hosted (see public/fonts); falls back gracefully. */
+  --font-body: "OpenDyslexic", var(--font-lexend), system-ui, sans-serif;
+}
+
+/* ---- Text scale --------------------------------------------------------- */
+[data-text="sm"] { --text-scale: 0.9; }
+[data-text="md"] { --text-scale: 1; }
+[data-text="lg"] { --text-scale: 1.15; }
+[data-text="xl"] { --text-scale: 1.3; }
+
+/* ---- Tailwind theme bridge --------------------------------------------- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-secondary: var(--secondary);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-body);
+  --radius-card: var(--radius);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  font-size: calc(100% * var(--text-scale));
+  /* never below the 16px dyslexia-friendly minimum at md scale */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  /* Generous spacing improves readability for dyslexic readers. */
+  line-height: 1.65;
+  letter-spacing: 0.012em;
+  word-spacing: 0.05em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Visible focus for keyboard & switch users everywhere. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---- Reduced motion ----------------------------------------------------- */
+/* Honour the user's chosen setting AND the OS-level preference. */
+[data-motion="reduced"] *,
+[data-motion="reduced"] *::before,
+[data-motion="reduced"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Screen-reader-only helper. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

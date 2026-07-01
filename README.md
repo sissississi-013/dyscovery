@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dyscovery
 
-## Getting Started
+A multi-modal, AI-personalized **cognitive-training playground** for
+neurodivergent kids (dyslexia, ADHD, and the broader spectrum). Dyscovery turns
+peer-reviewed cognitive science into joyful, accessible games — and adapts them
+to each child via a research-based screening profile.
 
-First, run the development server:
+> **Screening, not diagnosis.** Dyscovery never diagnoses. It screens for
+> strengths/needs and provides training, as a complement to professional care.
+
+See [`docs/PLAN.md`](docs/PLAN.md) for the full product plan, the research base,
+the architecture decisions, and the roadmap.
+
+## Three experiences
+
+- **Discover** — a short, adaptive, multi-modal screening → a normalized
+  *Reference Profile*. Scoring is deterministic; AI only adapts and narrates.
+- **Play** — a schema-governed *AI Game Director* directs a library of
+  hand-built, accessible game mechanics (it emits validated JSON blueprints,
+  never raw code), with multi-modal audio/visuals and adaptive difficulty.
+- **Grow** — kid-facing streaks/badges and a caregiver progress view with
+  honest change-over-time charts and re-assessment.
+
+## Tech stack
+
+- **Next.js 16** (App Router) + **React 19** + **TypeScript**
+- **Tailwind CSS v4** with an accessibility-first design system
+- **Drizzle ORM** + **Neon Postgres**
+- **Zod** for runtime schema validation (incl. AI game blueprints)
+- **Phaser** for arcade game mechanics _(added in Phase 2)_
+
+## Accessibility (built in, not bolted on)
+
+Driven by `data-*` attributes on `<html>` and the `AccessibilityProvider`:
+
+- Dyslexia-friendly fonts (Lexend default, Atkinson Hyperlegible, OpenDyslexic)
+- Color themes incl. high-contrast (WCAG AA pairs)
+- Adjustable text size, reduced-motion (respects OS preference), sound toggle
+- Visible focus, skip link, keyboard support
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # add your Neon DATABASE_URL
+npm run db:push              # create tables in Neon
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` / `start` | Production build / serve |
+| `npm run lint` / `typecheck` | ESLint / TypeScript checks |
+| `npm run db:generate` | Generate SQL migrations from the schema |
+| `npm run db:push` | Push the schema to Neon |
+| `npm run db:studio` | Open Drizzle Studio |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Privacy by design (COPPA)
 
-## Learn More
+Children never own accounts — a parent/guardian holds the account, gives
+verifiable consent, and can export or delete data at any time. We minimize data,
+never sell it, and never use it for behavioral ads. See `src/db/schema.ts`
+(`consentRecords`, `auditLog`) and `/legal/privacy`.
 
-To learn more about Next.js, take a look at the following resources:
+## Status
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Phase 0 (foundations) in place:** app scaffold, accessibility design system,
+database schema, route shells, and legal/consent scaffolding. Next up: the
+screening engine (Phase 1) and the game engine (Phase 2).
